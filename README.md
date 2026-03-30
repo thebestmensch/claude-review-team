@@ -1,4 +1,4 @@
-# Review Ensemble
+# Claude Review Team
 
 Review agents for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that automatically evaluate your work from multiple angles — visual quality, accessibility, copy tone, code correctness, and design soundness.
 
@@ -53,7 +53,7 @@ The information firewall is the core design principle. An agent that can see `wi
 
 ```bash
 git clone <this-repo>
-cd review-ensemble
+cd claude-review-team
 chmod +x install.sh
 ./install.sh
 ```
@@ -89,9 +89,9 @@ Interviews you about your project, then generates the config files.
 
 ```bash
 mkdir -p .claude/rules/review-lenses
-cp /path/to/review-ensemble/templates/visual-qa-philosophy.md .claude/rules/
-cp /path/to/review-ensemble/templates/voice-guide.md .claude/rules/
-cp /path/to/review-ensemble/templates/review-lenses/example.md .claude/rules/review-lenses/my-lens.md
+cp /path/to/claude-review-team/templates/visual-qa-philosophy.md .claude/rules/
+cp /path/to/claude-review-team/templates/voice-guide.md .claude/rules/
+cp /path/to/claude-review-team/templates/review-lenses/example.md .claude/rules/review-lenses/my-lens.md
 ```
 
 Edit each file following the guided prompts inside.

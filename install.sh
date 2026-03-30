@@ -49,8 +49,8 @@ install_file() {
 }
 
 echo ""
-echo "Review Ensemble"
-echo "==============="
+echo "Claude Review Team"
+echo "=================="
 if [[ "$NO_FRONTEND" == "1" ]]; then
     dim "(backend only — skipping visual/accessibility/tone QA)"
 fi
