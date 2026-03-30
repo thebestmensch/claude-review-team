@@ -60,10 +60,18 @@ chmod +x install.sh
 
 Copies skills, dispatch rules, and agents to `~/.claude/`. Use `--force` to overwrite existing files.
 
+**No frontend work?** Skip the visual, accessibility, and tone QA agents:
+
+```bash
+./install.sh --no-frontend
+```
+
+You still get lensed code review, devil's advocate, research agent, security reviewer, and all dispatch rules for code-level work.
+
 ### Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
-- [Playwright plugin](https://github.com/anthropics/claude-code-plugins) (for URL-based visual/accessibility/tone QA)
+- [Playwright plugin](https://github.com/anthropics/claude-code-plugins) (for visual/accessibility/tone QA — not needed with `--no-frontend`)
 
 ## Project Setup
 
