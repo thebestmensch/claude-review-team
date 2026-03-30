@@ -2,7 +2,7 @@
 effort: high
 ---
 
-Generate project-specific config files for the Blind Review Ensemble by interviewing the user about their project's design, voice, and review concerns.
+Generate project-specific config files for the Review Ensemble by interviewing the user about their project's design, voice, and review concerns.
 
 ## Process
 

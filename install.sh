@@ -36,8 +36,8 @@ install_file() {
 }
 
 echo ""
-echo "Blind Review Ensemble"
-echo "====================="
+echo "Review Ensemble"
+echo "==============="
 echo ""
 
 echo "Skills:"
