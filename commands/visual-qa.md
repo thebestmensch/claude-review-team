@@ -11,9 +11,9 @@ Run a visual QA review on a UI screenshot. Two modes:
 
 - `$ARGUMENTS`: Optional. Accepts one or more of:
   - `polish` — run Polish QA instead of Bug QA
-  - A URL to screenshot: `localhost:8050`, `localhost:8010/books`
+  - A URL to screenshot: `localhost:3000`, `localhost:8080/dashboard`
   - A file path to an existing screenshot: `/path/to/screenshot.png`
-  - A focus area hint: `BeanGPT widget`, `gift checkout screen`
+  - A focus area hint: `sidebar navigation`, `checkout form`
   - A reference image (prefix with `ref:`): `ref:/path/to/figma-mock.png`
   - Empty → ask the user what to review
 
@@ -31,7 +31,7 @@ Run a visual QA review on a UI screenshot. Two modes:
    - Capture a **DOM snapshot** with `browser_snapshot` — use this to identify significant widgets/sections
 
    **Tier 2 — Per-widget at 2x CSS zoom:**
-   - From the DOM snapshot, identify every distinct widget, card, or section (e.g., sports widget, BeanGPT widget, thermostat card, mood tracker)
+   - From the DOM snapshot, identify every distinct widget, card, or section (e.g., stats card, user profile widget, navigation sidebar, data table)
    - For each widget, use `browser_run_code` to CSS-zoom the element and screenshot it at 2x resolution. This is critical — 1x element screenshots miss 1-5px boundary issues. The technique:
      ```js
      async (page) => {
@@ -56,7 +56,7 @@ Run a visual QA review on a UI screenshot. Two modes:
      ```
    - For interactive widgets, also hover and re-screenshot at 2x
    - For widgets with input fields or complex boundaries, optionally take a 3x zoom of just the input/boundary area
-   - Save each with a descriptive filename: `qa-widget-beangpt-2x.png`, `qa-widget-sports-2x.png`, etc.
+   - Save each with a descriptive filename: `qa-widget-sidebar-2x.png`, `qa-widget-stats-2x.png`, etc.
 
    **Why 2x CSS zoom:** Testing showed that 1x widget screenshots caught 2 of 5 known issues. 2x CSS-zoomed screenshots caught 4-5 of 5. The 2x zoom renders 1px CSS artifacts as 2px features in the PNG, making hairline gaps, clipped borders, and color mismatches visible to the vision model.
 
