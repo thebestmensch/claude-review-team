@@ -45,36 +45,35 @@ Lenses activate based on changed file paths. Each lens config in `.claude/rules/
 
 ## Supplementary Agents
 
-Alongside the lensed code review, two specialized agents auto-dispatch when their trigger patterns match the diff. They run in background, in parallel with the lensed review.
+Alongside the lensed code review, specialized agents auto-dispatch when their trigger patterns match the diff. They run in background, in parallel with the lensed review.
 
-### Silent Failure Hunter
-
-**Fires when the diff contains:** `try`, `except`, `catch`, `raise`, `throw`, `.catch(`, `Promise`, `fallback`, or `retry` patterns.
-
-Dispatches `silent-failure-hunter` agent in background. It audits error handling for swallowed exceptions, empty catch blocks, broad exception catching, and fallbacks that mask real problems.
-
-### Type Design Analyzer
-
-**Fires when the diff contains:** new `class` definitions, Pydantic `BaseModel` subclasses, `@dataclass`, TypeScript `interface`/`type` declarations, Django model definitions, or `CREATE TABLE` statements.
-
-Dispatches `type-design-analyzer` agent in background. It rates new types on encapsulation, invariant expression, usefulness, and enforcement.
+| Agent | Fires when diff contains | Audits |
+|-------|--------------------------|--------|
+| `silent-failure-hunter` | `try`, `except`, `catch`, `raise`, `throw`, `.catch(`, `Promise`, `fallback`, `retry` | Swallowed exceptions, empty catches, broad catching, masked errors |
+| `type-design-analyzer` | New `class` defs, `BaseModel`, `@dataclass`, TS `interface`/`type`, Django models, `CREATE TABLE` | Encapsulation, invariant expression/enforcement |
+| `concurrency-auditor` | `async with`, `await`, `get_db`, `Lock`, `transaction`, `BEGIN`, `gather`, `create_task`, sync endpoints | Held connections, write contention, race conditions, locking hazards |
+| `api-contract-reviewer` | Route/endpoint handler changes **AND** a frontend/mobile directory exists in the repo | Response shape drift, renamed fields, broken consumer assumptions |
+| `test-gap-analyzer` | Test files in the diff, **OR** new functions/endpoints without corresponding test files | Untested error paths, missing edge cases, brittle assertions |
 
 ### Dispatch Pattern
 
-Pass the same git diff range that the lensed review uses. The prompt must scope the agent to only the changed code:
+Pass the same git diff range that the lensed review uses. The prompt must scope each agent to only the changed code:
 
 ```python
-# Both fire alongside the lensed review, not instead of it
+# Fire alongside the lensed review, not instead of it
 # Prompt must include: "Review only the changes in git diff {BASE_SHA}..{HEAD_SHA}"
 Agent(subagent_type="silent-failure-hunter", model="sonnet", run_in_background=true,
       prompt="Review error handling in the changes from git diff {BASE_SHA}..{HEAD_SHA}. ...")
-Agent(subagent_type="type-design-analyzer", model="sonnet", run_in_background=true,
-      prompt="Analyze types introduced or modified in git diff {BASE_SHA}..{HEAD_SHA}. ...")
+Agent(subagent_type="concurrency-auditor", model="sonnet", run_in_background=true,
+      prompt="Audit concurrency patterns in the changes from git diff {BASE_SHA}..{HEAD_SHA}. ...")
+# ... etc for each triggered agent
 ```
 
-Announce all dispatches in one line: "Dispatching lensed code review (security, performance) + silent failure hunter + type design analyzer."
+Announce all dispatches in one line: "Dispatching lensed code review (security, performance) + silent failure hunter + concurrency auditor."
 
-**When neither triggers:** Only the lensed review runs, as before. The supplementary agents add depth — they don't replace the base review.
+**When none trigger:** Only the lensed review runs, as before. The supplementary agents add depth — they don't replace the base review.
+
+**Limit parallel agents:** Dispatch at most 3 supplementary agents per review. If more than 3 trigger, prioritize by relevance to the change — skip agents whose triggers match only incidentally (e.g., a trivial `try/except` in a test file shouldn't fire the silent failure hunter).
 
 ## How to Use Results
 
@@ -89,6 +88,9 @@ When supplementary agents return:
 
 - **Silent failure findings** -> treat CRITICAL and HIGH the same as lensed review critical/important issues
 - **Type design ratings** -> present ratings and concerns to the user; fix enforcement gaps if straightforward
+- **Concurrency issues** -> CRITICAL (deadlock/corruption) fix immediately; HIGH (intermittent) fix before merge
+- **API contract issues** -> CRITICAL (will crash/404) fix immediately; note safe additive changes
+- **Test gap findings** -> add tests for critical gaps; note important gaps for the user
 
 If any reviewer flags something you disagree with, push back with technical reasoning — don't blindly implement.
 

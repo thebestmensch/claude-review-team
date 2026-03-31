@@ -2,6 +2,7 @@
 name: devils-advocate
 description: Challenge designs and plans before approval — finds overengineering, missed existing solutions, hidden assumptions, YAGNI violations. Adversarial but evidence-based.
 model: opus
+effort: high
 allowedTools:
   - Read
   - Grep

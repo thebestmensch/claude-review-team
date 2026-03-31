@@ -31,6 +31,9 @@ Different agents use different strategies: visual and tone reviewers operate beh
 |-------|--------------------------|---------|
 | Silent Failure Hunter | try/catch/except, fallback logic, retry patterns | Swallowed exceptions, empty catches, masked errors |
 | Type Design Analyzer | New classes, schemas, models, interfaces | Encapsulation, invariant expression/enforcement |
+| Concurrency Auditor | async/await, DB connections, locks, transactions | Held connections, write contention, race conditions |
+| API Contract Reviewer | Route handler changes + frontend dir exists | Response shape drift, broken consumer assumptions |
+| Test Gap Analyzer | Test files, or new code without tests | Untested error paths, missing edge cases, brittle assertions |
 
 ### Dispatch Rules (automatic orchestration)
 
@@ -59,6 +62,16 @@ Different agents use different strategies: visual and tone reviewers operate beh
 │             │    git diff       │  Type Design │  invariant/encapsulation
 │             │ ────────────────→ │  Analyzer    │  (auto, when diff has
 │             │                   │              │   new types/schemas)
+│             │                   ├──────────────┤
+│             │    git diff       │  Concurrency │  locking, races, held
+│             │ ────────────────→ │  Auditor     │  connections (auto,
+│             │                   │              │   async/DB/transaction)
+│             │                   ├──────────────┤
+│             │    git diff       │  API Contract│  consumer drift (auto,
+│             │ ────────────────→ │  Reviewer    │  route changes + FE dir)
+│             │                   ├──────────────┤
+│             │    git diff       │  Test Gap    │  behavioral coverage
+│             │ ────────────────→ │  Analyzer    │  (auto, new/changed code)
 └─────────────┘                   └──────────────┘
 ```
 
@@ -81,7 +94,7 @@ Copies skills, dispatch rules, and agents to `~/.claude/`. Use `--force` to over
 ./install.sh --no-frontend
 ```
 
-You still get lensed code review, silent failure hunter, type design analyzer, devil's advocate, research agent, security reviewer, and all dispatch rules for code-level work.
+You still get lensed code review, all supplementary code agents (silent failure hunter, type design analyzer, concurrency auditor, API contract reviewer, test gap analyzer), devil's advocate, research agent, security reviewer, and all dispatch rules.
 
 ### Requirements
 
@@ -164,8 +177,11 @@ See `templates/review-lenses/example.md` for a full template with starter ideas.
 └── agents/             ← subagent definitions
     ├── devils-advocate.md
     ├── research-agent.md
+    ├── api-contract-reviewer.md
+    ├── concurrency-auditor.md
     ├── security-reviewer.md
     ├── silent-failure-hunter.md
+    ├── test-gap-analyzer.md
     └── type-design-analyzer.md
 
 your-project/

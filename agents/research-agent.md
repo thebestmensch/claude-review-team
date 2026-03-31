@@ -2,6 +2,7 @@
 name: research-agent
 description: Deep pre-implementation research — explores existing tools/packages/services, evaluates fit against user's stack, returns 2-3 options with tradeoffs. Feeds into brainstorming.
 model: sonnet
+effort: high
 allowedTools:
   - Read
   - Grep
