@@ -25,6 +25,13 @@ Different agents use different strategies: visual and tone reviewers operate beh
 | Research Agent | Brainstorming | Investigates existing tools and packages |
 | Security Reviewer | Standalone or as lens | Auth bypasses, secrets, injection, OWASP top 10 |
 
+### Supplementary Code Agents (auto-dispatched alongside code review)
+
+| Agent | Fires when diff contains | Purpose |
+|-------|--------------------------|---------|
+| Silent Failure Hunter | try/catch/except, fallback logic, retry patterns | Swallowed exceptions, empty catches, masked errors |
+| Type Design Analyzer | New classes, schemas, models, interfaces | Encapsulation, invariant expression/enforcement |
+
 ### Dispatch Rules (automatic orchestration)
 
 | Rule | Triggers |
@@ -148,8 +155,10 @@ See `templates/review-lenses/example.md` for a full template with starter ideas.
 │   └── advisory-agents.md
 └── agents/             ← subagent definitions
     ├── devils-advocate.md
+    ├── research-agent.md
     ├── security-reviewer.md
-    └── research-agent.md
+    ├── silent-failure-hunter.md
+    └── type-design-analyzer.md
 
 your-project/
 └── .claude/rules/      ← project-specific config
