@@ -51,6 +51,14 @@ Different agents use different strategies: visual and tone reviewers operate beh
 │             │ ────────────────→ │  A11y QA     │  no CSS, has ARIA tree
 │             │    rendered text  ├──────────────┤
 │             │ ────────────────→ │  Tone QA     │  no code, has voice guide
+│             │                   ├──────────────┤
+│             │    git diff       │  Silent      │  error handling audit
+│             │ ────────────────→ │  Failure     │  (auto, when diff has
+│             │                   │  Hunter      │   try/catch/except)
+│             │                   ├──────────────┤
+│             │    git diff       │  Type Design │  invariant/encapsulation
+│             │ ────────────────→ │  Analyzer    │  (auto, when diff has
+│             │                   │              │   new types/schemas)
 └─────────────┘                   └──────────────┘
 ```
 
@@ -73,7 +81,7 @@ Copies skills, dispatch rules, and agents to `~/.claude/`. Use `--force` to over
 ./install.sh --no-frontend
 ```
 
-You still get lensed code review, devil's advocate, research agent, security reviewer, and all dispatch rules for code-level work.
+You still get lensed code review, silent failure hunter, type design analyzer, devil's advocate, research agent, security reviewer, and all dispatch rules for code-level work.
 
 ### Requirements
 

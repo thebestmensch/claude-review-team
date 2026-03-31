@@ -61,10 +61,15 @@ Dispatches `type-design-analyzer` agent in background. It rates new types on enc
 
 ### Dispatch Pattern
 
+Pass the same git diff range that the lensed review uses. The prompt must scope the agent to only the changed code:
+
 ```python
 # Both fire alongside the lensed review, not instead of it
-Agent(subagent_type="silent-failure-hunter", model="sonnet", run_in_background=true)
-Agent(subagent_type="type-design-analyzer", model="sonnet", run_in_background=true)
+# Prompt must include: "Review only the changes in git diff {BASE_SHA}..{HEAD_SHA}"
+Agent(subagent_type="silent-failure-hunter", model="sonnet", run_in_background=true,
+      prompt="Review error handling in the changes from git diff {BASE_SHA}..{HEAD_SHA}. ...")
+Agent(subagent_type="type-design-analyzer", model="sonnet", run_in_background=true,
+      prompt="Analyze types introduced or modified in git diff {BASE_SHA}..{HEAD_SHA}. ...")
 ```
 
 Announce all dispatches in one line: "Dispatching lensed code review (security, performance) + silent failure hunter + type design analyzer."
